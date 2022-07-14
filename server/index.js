@@ -69,16 +69,16 @@ io.on('connection', (socket) => {
     restartGame(roomId);
   });
 
-  socket.on('disconnect', () => {
-    const player = players.find((player) => player.id === socket.id);
+  socket.on('leave', () => {
+    const player = players.find((p) => p.id === socket.id);
     console.log(`Player ${player.name} has disconnected`);
-    players = players.filter((player) => player.id !== socket.id);
+    players = players.filter((p) => p.id !== socket.id);
     updateClientsInRoom(roomId);
   });
 
   // keeping the connection alive
   socket.on('pong', () => {
-    let player = players.find((p) => p.id == socket.id);
+    players.find((p) => p.id == socket.id);
   });
 });
 
