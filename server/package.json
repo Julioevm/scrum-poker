@@ -1,0 +1,16 @@
+{
+  "name": "scrum-poker-server",
+  "version": "0.0.1",
+  "license": "MIT",
+  "scripts": {
+	"dev": "nodemon index.js"
+  },
+  "description": "The server for the scrum poker app. Using Socket.io",
+  "dependencies": {
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "nodemon": "^2.0.19",
+    "short-uuid": "^4.2.0",
+    "socket.io": "^4.5.1"
+  }
+}
