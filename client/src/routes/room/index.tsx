@@ -1,7 +1,7 @@
 import { Player, stateStore } from 'components/app';
 import { FunctionalComponent, h } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
-import { Socket } from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 import style from './style.css';
 
 interface Props {
@@ -43,6 +43,7 @@ const Room: FunctionalComponent<Props> = (props: Props) => {
       getPlayer();
 
       socket.on('update', (updatedPlayers: Player[]) => {
+        console.log('Updating player list.');
         setPlayers(updatedPlayers);
       });
 
@@ -57,8 +58,14 @@ const Room: FunctionalComponent<Props> = (props: Props) => {
       socket.on('ping', () => {
         socket.emit('pong');
       });
+    } else {
+      //a new socket connection with a roomId handshake query
+      const newSocket = io(`http://localhost:3000?roomId=${roomId}`);
+      stateStore.setState({ socket: newSocket });
+      askName();
     }
-    // Todo: Create a new socket if player joins through link.
+
+    stateStore.setState({ room: roomId });
 
     return (): void => {
       if (socket) {

@@ -14,7 +14,6 @@ const Home: FunctionalComponent = () => {
     const socket = stateStore.getState().socket;
     socket!.on('room', (roomId: string) => {
       route(`/room/${roomId}`);
-      stateStore.setState({ room: roomId });
     });
   }
 
