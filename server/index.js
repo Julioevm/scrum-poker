@@ -71,8 +71,10 @@ io.on('connection', (socket) => {
 
   function disconnectPlayer() {
     const player = players.find((p) => p.id === socket.id);
-    console.log(`Player ${player.name} has disconnected`);
-    players = players.filter((p) => p.id !== socket.id);
+    if (player) {
+      console.log(`Player ${player.name} has disconnected`);
+      players = players.filter((p) => p.id !== socket.id);
+    }
     updateClientsInRoom(roomId);
   }
 
