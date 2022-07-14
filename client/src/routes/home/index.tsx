@@ -5,6 +5,8 @@ import { stateStore } from 'components/app';
 import style from './style.css';
 
 const Home: FunctionalComponent = () => {
+  const room = stateStore.getState().room;
+
   function startGame(): void {
     // Todo: use stored ENV variables to get the server address
     const newSocket = io('http://127.0.0.1:3000');
@@ -24,7 +26,7 @@ const Home: FunctionalComponent = () => {
       </header>
       <nav>
         <button onClick={startGame}>New Room</button>
-        <Link href="/room/john">John</Link>
+        {room && <Link href={`/room/${room}`}>Back to last room...</Link>}
       </nav>
     </div>
   );

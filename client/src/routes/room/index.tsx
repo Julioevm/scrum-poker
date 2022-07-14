@@ -22,7 +22,9 @@ const Room: FunctionalComponent<Props> = (props: Props) => {
     const name = prompt('What is your name?');
     if (name && socket) {
       emitName(socket, name);
-      setPlayers([...players, { id: socket.id, name }]);
+      const player = { id: socket.id, name: name };
+      stateStore.setState({ player: player });
+      setPlayers([...players, player]);
     }
   };
 
@@ -56,6 +58,7 @@ const Room: FunctionalComponent<Props> = (props: Props) => {
         socket.emit('pong');
       });
     }
+    // Todo: Create a new socket if player joins through link.
 
     return (): void => {
       if (socket) {
