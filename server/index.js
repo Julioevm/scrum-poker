@@ -69,12 +69,16 @@ io.on('connection', (socket) => {
     restartGame(roomId);
   });
 
-  socket.on('leave', () => {
+  function disconnectPlayer() {
     const player = players.find((p) => p.id === socket.id);
     console.log(`Player ${player.name} has disconnected`);
     players = players.filter((p) => p.id !== socket.id);
     updateClientsInRoom(roomId);
-  });
+  }
+
+  socket.on('leave', () => disconnectPlayer());
+
+  socket.on('disconnect', () => disconnectPlayer());
 
   // keeping the connection alive
   socket.on('pong', () => {
