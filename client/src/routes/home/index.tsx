@@ -1,21 +1,15 @@
 import { FunctionalComponent, h } from 'preact';
 import { Link, route } from 'preact-router';
-import { MutableRef } from 'preact/hooks';
 import { io, Socket } from 'socket.io-client';
 import { socketStore } from 'components/app';
 import style from './style.css';
 
-interface Props {
-  socket: MutableRef<Socket>;
-}
-
 const Home: FunctionalComponent = () => {
   function startGame(): void {
     // Todo: use stored ENV variables to get the server address
-    const socket = socketStore.getState().socket;
     const newSocket = io('http://127.0.0.1:3000');
     socketStore.setState({ socket: newSocket });
-    // Todo: Store the socket in the state so we can use it in the component
+    const socket = socketStore.getState().socket;
     socket!.on('room', (roomId: string) => {
       route(`/room/${roomId}`);
     });
