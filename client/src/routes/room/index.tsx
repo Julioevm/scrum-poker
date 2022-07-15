@@ -34,25 +34,39 @@ const Room: FunctionalComponent<Props> = (props: Props) => {
     stateStore.setState({ player: { id: newSocket.id, name: name } });
   }
 
+  function setSocketHandlers() {
+    if (!socket) return;
+
+    socket.on('update', (updatedPlayers: Player[]) => {
+      setPlayers(updatedPlayers);
+    });
+
+    socket.on('show', () => {
+      console.log('Show');
+    });
+
+    socket.on('restart', () => {
+      console.log('Restart');
+    });
+
+    socket.on('ping', () => {
+      socket.emit('pong');
+    });
+  }
+
+  function unsubscribeEvents() {
+    if (socket) {
+      socket.off('ping');
+      socket.off('update');
+      socket.off('show');
+      socket.off('restart');
+    }
+  }
+
   useEffect(() => {
     if (socket) {
       emitName(socket, getPlayerName());
-
-      socket.on('update', (updatedPlayers: Player[]) => {
-        setPlayers(updatedPlayers);
-      });
-
-      socket.on('show', () => {
-        console.log('Show');
-      });
-
-      socket.on('restart', () => {
-        console.log('Restart');
-      });
-
-      socket.on('ping', () => {
-        socket.emit('pong');
-      });
+      setSocketHandlers();
     } else {
       createSocketAndPlayer();
     }
@@ -60,12 +74,7 @@ const Room: FunctionalComponent<Props> = (props: Props) => {
     stateStore.setState({ room: roomId });
 
     return (): void => {
-      if (socket) {
-        socket.off('ping');
-        socket.off('update');
-        socket.off('show');
-        socket.off('restart');
-      }
+      unsubscribeEvents();
     };
   }, [socket]);
 
