@@ -29,13 +29,14 @@ let players = [];
 io.on('connection', (socket) => {
   console.log('A user connected', socket.id);
   let roomId = socket.handshake.query['roomId'];
+  let name = socket.handshake.query['name'];
   if (!roomId) {
     roomId = short.generate();
     socket.emit('room', roomId);
   }
   socket.join(roomId);
 
-  players.push({ id: socket.id, name: '', roomId: roomId });
+  players.push({ id: socket.id, name: name, roomId: roomId });
 
   socket.on('name', (name) => {
     let player = players.find((p) => p.id == socket.id);
