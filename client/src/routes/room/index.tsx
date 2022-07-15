@@ -12,38 +12,33 @@ function emitName(socket: Socket, name: string) {
   socket.emit('name', name);
 }
 
+function askName(): string {
+  return prompt('What is your name?') || 'Guest';
+}
+
+function getPlayerName() {
+  const stateName = stateStore.getState().player.name;
+  return stateName && stateName != 'Guest' ? stateName : askName();
+}
+
 const Room: FunctionalComponent<Props> = (props: Props) => {
   const { roomId } = props;
   const roomName = 'default';
-  const socket = stateStore.getState().socket;
+  const socket = stateStore((state) => state.socket);
   const [players, setPlayers] = useState<Player[]>([]);
 
-  const askName = () => {
-    const name = prompt('What is your name?');
-    if (name && socket) {
-      emitName(socket, name);
-      const player = { id: socket.id, name: name };
-      stateStore.setState({ player: player });
-      setPlayers([...players, player]);
-    }
-  };
-
-  const getPlayer = () => {
-    const name = stateStore.getState().player.name;
-    if (name !== 'Guest' && socket) {
-      emitName(socket, name);
-      setPlayers([...players, { id: socket.id, name }]);
-    } else {
-      askName();
-    }
-  };
+  function createSocketAndPlayer() {
+    const name = getPlayerName();
+    const newSocket = io(`http://localhost:3000?roomId=${roomId}&name=${name}`);
+    stateStore.setState({ socket: newSocket });
+    stateStore.setState({ player: { id: newSocket.id, name: name } });
+  }
 
   useEffect(() => {
     if (socket) {
-      getPlayer();
+      emitName(socket, getPlayerName());
 
       socket.on('update', (updatedPlayers: Player[]) => {
-        console.log('Updating player list.');
         setPlayers(updatedPlayers);
       });
 
@@ -59,10 +54,7 @@ const Room: FunctionalComponent<Props> = (props: Props) => {
         socket.emit('pong');
       });
     } else {
-      //a new socket connection with a roomId handshake query
-      const newSocket = io(`http://localhost:3000?roomId=${roomId}`);
-      stateStore.setState({ socket: newSocket });
-      askName();
+      createSocketAndPlayer();
     }
 
     stateStore.setState({ room: roomId });

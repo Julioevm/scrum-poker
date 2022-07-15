@@ -1,6 +1,6 @@
 import { FunctionalComponent, h } from 'preact';
 import { Link, route } from 'preact-router';
-import { io, Socket } from 'socket.io-client';
+import { io } from 'socket.io-client';
 import { stateStore } from 'components/app';
 import style from './style.css';
 
