@@ -1,4 +1,5 @@
 import { Player, stateStore } from 'components/app';
+import VotingMenu from 'components/votingMenu/votingMenu';
 import { FunctionalComponent, h } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
 import { io, Socket } from 'socket.io-client';
@@ -23,15 +24,26 @@ function getPlayerName() {
 
 const Room: FunctionalComponent<Props> = (props: Props) => {
   const { roomId } = props;
-  const roomName = 'default';
   const socket = stateStore((state) => state.socket);
   const [players, setPlayers] = useState<Player[]>([]);
+  const [player, setPlayer] = useState<Player>({
+    id: '0',
+    name: getPlayerName(),
+    vote: undefined,
+  });
+  const values = ['0', '0,5', '1', '3', '5', '8', '?'];
 
   function createSocketAndPlayer() {
-    const name = getPlayerName();
-    const newSocket = io(`http://localhost:3000?roomId=${roomId}&name=${name}`);
+    const newSocket = io(`http://localhost:3000?roomId=${roomId}&name=${player.name}`);
     stateStore.setState({ socket: newSocket });
-    stateStore.setState({ player: { id: newSocket.id, name: name } });
+    stateStore.setState({ player: { ...player, id: newSocket.id } });
+  }
+
+  function handlePlayerVote(value: string) {
+    return (): void => {
+      socket?.emit('vote', value);
+      setPlayer({ ...player, vote: value });
+    };
   }
 
   function setSocketHandlers() {
@@ -65,7 +77,7 @@ const Room: FunctionalComponent<Props> = (props: Props) => {
 
   useEffect(() => {
     if (socket) {
-      emitName(socket, getPlayerName());
+      emitName(socket, player.name);
       setSocketHandlers();
     } else {
       createSocketAndPlayer();
@@ -79,10 +91,10 @@ const Room: FunctionalComponent<Props> = (props: Props) => {
   }, [socket]);
 
   const renderPlayers = (): JSX.Element[] => {
-    return players.map((player: Player) => {
+    return players.map((p: Player) => {
       return (
-        <div className={style.playerName} key={player.id}>
-          {player.name}
+        <div className={style.playerName} key={p.id}>
+          {p.name}
         </div>
       );
     });
@@ -91,8 +103,10 @@ const Room: FunctionalComponent<Props> = (props: Props) => {
   return (
     <div class={style.room}>
       <h1>Room: {roomId}</h1>
-      <p>Welcome to room {roomName}.</p>
+      <p>Welcome, {player.name}.</p>
+      <p>Players:</p>
       {renderPlayers()}
+      <VotingMenu values={values} handlePlayerVote={handlePlayerVote} />
     </div>
   );
 };

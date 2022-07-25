@@ -11,6 +11,7 @@ import { Socket } from 'socket.io-client';
 export interface Player {
   id: string;
   name: string;
+  vote: string | undefined;
 }
 interface StateStore {
   socket: Socket | null;
@@ -19,7 +20,7 @@ interface StateStore {
 }
 export const stateStore = create<StateStore>(() => ({
   socket: null,
-  player: { id: '0', name: 'Guest' },
+  player: { id: '0', name: 'Guest', vote: undefined },
   room: undefined,
 }));
 
