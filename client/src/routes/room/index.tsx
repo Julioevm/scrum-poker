@@ -1,7 +1,8 @@
 import { Player, stateStore } from 'components/app';
+import NameModal from 'components/nameModal/NameModal';
 import VotingMenu from 'components/votingMenu/VotingMenu';
 import VotingResults from 'components/votingResults/VotingResults';
-import { FunctionalComponent, h } from 'preact';
+import { h, Fragment } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
 import { io, Socket } from 'socket.io-client';
 import style from './style.css';
@@ -14,21 +15,19 @@ function emitName(socket: Socket, name: string) {
   socket.emit('name', name);
 }
 
-function askName(): string {
-  return prompt('What is your name?') || 'Guest';
-}
-
 function getPlayerName() {
   const stateName = stateStore.getState().player.name;
-  return stateName && stateName != 'Guest' ? stateName : askName();
+  return stateName && stateName != 'Guest' ? stateName : 'Guest';
 }
 
 function copyLink(roomId: string) {
-  const link = `${window.location.origin}/room/${roomId}`;
-  navigator.clipboard.writeText(link);
+  return () => {
+    const link = `${window.location.origin}/room/${roomId}`;
+    navigator.clipboard.writeText(link);
+  };
 }
 
-const Room: FunctionalComponent<Props> = (props: Props) => {
+const Room = (props: Props) => {
   const { roomId } = props;
   const socket = stateStore((state) => state.socket);
   const [players, setPlayers] = useState<Player[]>([]);
@@ -37,9 +36,17 @@ const Room: FunctionalComponent<Props> = (props: Props) => {
     name: getPlayerName(),
     vote: undefined,
   });
-  const [show, setShow] = useState(false);
+  const [showVotes, setShowVotes] = useState(false);
+  const [showModal, setShowModal] = useState(player.name === 'Guest');
 
   const values = ['0', '0,5', '1', '3', '5', '8', '?'];
+
+  function updateName(name: string) {
+    stateStore.setState({ player: { ...stateStore.getState().player, name } });
+    setPlayer({ ...player, name });
+    emitName(socket!, name);
+    setShowModal(false);
+  }
 
   function createSocketAndPlayer() {
     const newSocket = io(
@@ -56,6 +63,10 @@ const Room: FunctionalComponent<Props> = (props: Props) => {
     };
   }
 
+  function handleRestart() {
+    socket?.emit('restart');
+  }
+
   function setSocketHandlers() {
     if (!socket) return;
 
@@ -64,12 +75,11 @@ const Room: FunctionalComponent<Props> = (props: Props) => {
     });
 
     socket.on('show', () => {
-      console.log('Show');
-      setShow(true);
+      setShowVotes(true);
     });
 
     socket.on('restart', () => {
-      console.log('Restart');
+      setShowVotes(false);
     });
 
     socket.on('ping', () => {
@@ -101,21 +111,27 @@ const Room: FunctionalComponent<Props> = (props: Props) => {
     };
   }, [socket]);
 
+  console.log(showVotes);
+
   return (
-    <div class={style.room}>
-      <p>Room: {roomId}</p>{' '}
-      <button onClick={() => copyLink(roomId)}>Copy Link</button>
-      <p>Welcome, {player.name}.</p>
-      <VotingResults show={show} players={players} />
-      <VotingMenu values={values} handlePlayerVote={handlePlayerVote} />
-      <button
-        onClick={() => {
-          socket?.emit('restart');
-        }}
-      >
-        Restart
-      </button>
-    </div>
+    <>
+      {showModal && (
+        <NameModal
+          name={player.name}
+          onSubmit={updateName}
+          onCancel={() => setShowModal(false)}
+        />
+      )}
+      <div class={style.room}>
+        <p>Room: {roomId}</p>{' '}
+        <button onClick={copyLink(roomId)}>Copy Link</button>
+        <p>Welcome, {player.name}.</p>{' '}
+        <button onClick={() => setShowModal(true)}>Change Name</button>
+        <VotingResults show={showVotes} players={players} />
+        <VotingMenu values={values} handlePlayerVote={handlePlayerVote} />
+        <button onClick={handleRestart}>Restart</button>
+      </div>
+    </>
   );
 };
 
