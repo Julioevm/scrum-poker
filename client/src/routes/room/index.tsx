@@ -23,6 +23,11 @@ function getPlayerName() {
   return stateName && stateName != 'Guest' ? stateName : askName();
 }
 
+function copyLink(roomId: string) {
+  const link = `${window.location.origin}/room/${roomId}`;
+  navigator.clipboard.writeText(link);
+}
+
 const Room: FunctionalComponent<Props> = (props: Props) => {
   const { roomId } = props;
   const socket = stateStore((state) => state.socket);
@@ -98,10 +103,18 @@ const Room: FunctionalComponent<Props> = (props: Props) => {
 
   return (
     <div class={style.room}>
-      <h1>Room: {roomId}</h1>
+      <p>Room: {roomId}</p>{' '}
+      <button onClick={() => copyLink(roomId)}>Copy Link</button>
       <p>Welcome, {player.name}.</p>
       <VotingResults show={show} players={players} />
       <VotingMenu values={values} handlePlayerVote={handlePlayerVote} />
+      <button
+        onClick={() => {
+          socket?.emit('restart');
+        }}
+      >
+        Restart
+      </button>
     </div>
   );
 };
