@@ -1,5 +1,6 @@
 import { Player, stateStore } from 'components/app';
-import VotingMenu from 'components/votingMenu/votingMenu';
+import VotingMenu from 'components/votingMenu/VotingMenu';
+import VotingResults from 'components/votingResults/VotingResults';
 import { FunctionalComponent, h } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
 import { io, Socket } from 'socket.io-client';
@@ -31,10 +32,14 @@ const Room: FunctionalComponent<Props> = (props: Props) => {
     name: getPlayerName(),
     vote: undefined,
   });
+  const [show, setShow] = useState(false);
+
   const values = ['0', '0,5', '1', '3', '5', '8', '?'];
 
   function createSocketAndPlayer() {
-    const newSocket = io(`http://localhost:3000?roomId=${roomId}&name=${player.name}`);
+    const newSocket = io(
+      `http://localhost:3000?roomId=${roomId}&name=${player.name}`
+    );
     stateStore.setState({ socket: newSocket });
     stateStore.setState({ player: { ...player, id: newSocket.id } });
   }
@@ -55,6 +60,7 @@ const Room: FunctionalComponent<Props> = (props: Props) => {
 
     socket.on('show', () => {
       console.log('Show');
+      setShow(true);
     });
 
     socket.on('restart', () => {
@@ -90,22 +96,11 @@ const Room: FunctionalComponent<Props> = (props: Props) => {
     };
   }, [socket]);
 
-  const renderPlayers = (): JSX.Element[] => {
-    return players.map((p: Player) => {
-      return (
-        <div className={style.playerName} key={p.id}>
-          {p.name}
-        </div>
-      );
-    });
-  };
-
   return (
     <div class={style.room}>
       <h1>Room: {roomId}</h1>
       <p>Welcome, {player.name}.</p>
-      <p>Players:</p>
-      {renderPlayers()}
+      <VotingResults show={show} players={players} />
       <VotingMenu values={values} handlePlayerVote={handlePlayerVote} />
     </div>
   );

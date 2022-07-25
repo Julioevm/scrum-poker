@@ -5,7 +5,6 @@ interface Props {
   handlePlayerVote: Function;
 }
 function votingButtons(values: string[], handlePlayerVote: Function) {
-  // a function that renders a list of buttons for voting based on the values array
   return values.map((value) => <button onClick={handlePlayerVote(value)}>{value}</button>);
 }
 
