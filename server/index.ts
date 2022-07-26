@@ -1,13 +1,29 @@
-const app = require('express')();
-const http = require('http').createServer(app);
-const short = require('short-uuid');
-require('dotenv').config();
-const io = require('socket.io')(http, {
+import { Socket } from 'socket.io';
+import express from 'express';
+import dotenv from 'dotenv';
+import short from 'short-uuid';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
+
+const app = express();
+dotenv.config();
+
+interface Player {
+  id: string;
+  name: string;
+  roomId: string;
+  vote: string | undefined;
+}
+
+const options = {
   cors: {
     origin: process.env.ORIGIN || 'http://127.0.0.1:8080',
     methods: ['GET', 'POST'],
   },
-});
+};
+
+const httpServer = createServer();
+const io = new Server(httpServer, options);
 
 // keeping the connection alive
 setInterval(() => {
@@ -20,40 +36,40 @@ app.get('/', (req, res) => {
 });
 
 console.log(process.env.ORIGIN);
-http.listen(process.env.PORT || 3000, () => {
+httpServer.listen(process.env.PORT || 3000, () => {
   console.log('listening on *:3000');
 });
 
-let players = [];
+let players: Player[] = [];
 
-io.on('connection', (socket) => {
+io.on('connection', (socket: Socket) => {
   console.log('A user connected', socket.id);
-  let roomId = socket.handshake.query['roomId'];
-  let name = socket.handshake.query['name'];
+  let roomId = socket.handshake.query['roomId'] as string;
+  let name = socket.handshake.query['name'] as string;
   if (!roomId) {
     roomId = short.generate();
     socket.emit('room', roomId);
   }
-  socket.join(roomId);
+  socket.join(roomId!);
 
-  players.push({ id: socket.id, name: name, roomId: roomId });
+  players.push({ id: socket.id, name: name, roomId: roomId, vote: undefined });
 
   socket.on('name', (name) => {
-    let player = players.find((p) => p.id == socket.id);
+    const player = players.find((p) => p.id == socket.id);
     console.log(`User entered name ${name}`);
-    if (player) {
+    if (player && player.name != name) {
       console.log(`Changing name from ${player.name} to ${name}`);
       player.name = name;
     }
-    updateClientsInRoom(roomId);
+    updateClientsInRoom(roomId!);
   });
 
-  socket.on('vote', (vote) => {
+  socket.on('vote', (vote: string) => {
     let player = players.find((p) => p.id == socket.id);
     if (player) {
       player.vote = vote;
     }
-    console.log(`Player ${player.name} voted ${player.vote}`);
+    console.log(`Player ${player!.name} voted ${player!.vote}`);
 
     const playersInRoom = players.filter((p) => p.roomId == roomId);
     if (playersInRoom.every((p) => p.vote)) {
@@ -89,12 +105,12 @@ io.on('connection', (socket) => {
   });
 });
 
-function updateClientsInRoom(roomId) {
+function updateClientsInRoom(roomId: string) {
   const roomPlayers = players.filter((p) => p.roomId == roomId);
   io.to(roomId).emit('update', roomPlayers);
 }
 
-function restartGame(roomId) {
+function restartGame(roomId: string) {
   const roomPlayers = players.filter((p) => p.roomId == roomId);
   roomPlayers.forEach((p) => (p.vote = undefined));
   console.log(
