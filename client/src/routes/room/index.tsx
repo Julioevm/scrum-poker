@@ -111,8 +111,6 @@ const Room = (props: Props) => {
     };
   }, [socket]);
 
-  console.log(showVotes);
-
   return (
     <>
       {showModal && (
@@ -123,8 +121,10 @@ const Room = (props: Props) => {
         />
       )}
       <div class={style.room}>
-        <p>Room: {roomId}</p>{' '}
-        <button onClick={copyLink(roomId)}>Copy Link</button>
+        <div class={style.roomName}>
+          Room: {roomId}
+          <button onClick={copyLink(roomId)}>Copy Link</button>
+        </div>
         <p>Welcome, {player.name}.</p>{' '}
         <button onClick={() => setShowModal(true)}>Change Name</button>
         <VotingResults show={showVotes} players={players} />

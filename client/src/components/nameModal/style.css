@@ -12,7 +12,7 @@
 }
 
 .modalContent{
-    width: 500px;
+    width: min(var(--phone), 100%);
     height: 300px;
     background-color: #fff;
     border-radius: 5px;
@@ -28,4 +28,10 @@
     align-items: center;
     width: 100%;
     height: 50px;
+}
+
+@media (max-width: 600px){
+    .modalContent{
+        border-radius: 0;
+    }
 }
