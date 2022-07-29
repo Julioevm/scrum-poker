@@ -30,6 +30,8 @@ function copyLink(roomId: string) {
 const Room: FunctionComponent<Props> = (props) => {
   const { roomId } = props;
   const socket = stateStore((state) => state.socket);
+  console.log(socket);
+  
   const [players, setPlayers] = useState<Player[]>([]);
   const [player, setPlayer] = useState<Player>({
     id: '0',
@@ -86,6 +88,8 @@ const Room: FunctionComponent<Props> = (props) => {
         socket.emit('pong');
       });
     } else {
+      console.log('no socket');
+
       createSocketAndPlayer();
     }
 
@@ -120,7 +124,7 @@ const Room: FunctionComponent<Props> = (props) => {
         <div class={style.roomName}>
           Room: {roomId}{' '}
           <button class="buttonLink" onClick={copyLink(roomId)}>
-            Copy Link
+            Copy Invite Link
           </button>
         </div>
         <VotingResults show={showVotes} players={players} />

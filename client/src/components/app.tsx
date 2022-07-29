@@ -6,6 +6,7 @@ import Room from '../routes/room';
 import NotFoundPage from '../routes/notfound';
 import Header from './header';
 import create from 'zustand';
+import { persist } from 'zustand/middleware';
 import { Socket } from 'socket.io-client';
 
 export interface Player {
@@ -18,11 +19,21 @@ interface StateStore {
   player: Player;
   room: string | undefined;
 }
-export const stateStore = create<StateStore>(() => ({
-  socket: null,
-  player: { id: '0', name: 'Guest', vote: undefined },
-  room: undefined,
-}));
+
+export const stateStore = create<StateStore>()(
+  persist(
+    (set) => ({
+      socket: null,
+      player: { id: '0', name: 'Guest', vote: undefined },
+      room: undefined,
+    }),
+    {
+      name: 'session-storage',
+      getStorage: () => sessionStorage,
+      partialize: (state) => ({ player: state.player }),
+    }
+  )
+);
 
 const App: FunctionalComponent = () => {
   const handleRoute = async (e: { url: string }): Promise<void> => {
