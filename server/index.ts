@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import short from 'short-uuid';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import { log } from './Utils/utils';
 
 const app = express();
 dotenv.config();
@@ -24,7 +25,8 @@ const options = {
 
 const httpServer = createServer();
 const io = new Server(httpServer, options);
-
+log('Server running in development mode.');
+log(process.env.ORIGIN)
 // keeping the connection alive
 setInterval(() => {
   io.emit('ping');
@@ -35,15 +37,14 @@ app.get('/', (req, res) => {
   res.send('<h1>Service Up!</h1>');
 });
 
-console.log(process.env.ORIGIN);
 httpServer.listen(process.env.PORT || 3000, () => {
-  console.log('listening on *:3000');
+  log('listening on *:3000');
 });
 
 let players: Player[] = [];
 
 io.on('connection', (socket: Socket) => {
-  console.log('A user connected', socket.id);
+  log('A user connected ' + socket.id);
   let roomId = socket.handshake.query['roomId'] as string;
   let name = socket.handshake.query['name'] as string;
   if (!roomId) {
@@ -56,9 +57,9 @@ io.on('connection', (socket: Socket) => {
 
   socket.on('name', (name) => {
     const player = players.find((p) => p.id == socket.id);
-    console.log(`User entered name ${name}`);
+    log(`User entered name ${name}`);
     if (player && player.name != name) {
-      console.log(`Changing name from ${player.name} to ${name}`);
+      log(`Changing name from ${player.name} to ${name}`);
       player.name = name;
     }
     updateClientsInRoom(roomId!);
@@ -69,7 +70,7 @@ io.on('connection', (socket: Socket) => {
     if (player) {
       player.vote = vote;
     }
-    console.log(`Player ${player!.name} voted ${player!.vote}`);
+    log(`Player ${player!.name} voted ${player!.vote}`);
 
     const playersInRoom = players.filter((p) => p.roomId == roomId);
     if (playersInRoom.every((p) => p.vote)) {
@@ -89,7 +90,7 @@ io.on('connection', (socket: Socket) => {
   function disconnectPlayer() {
     const player = players.find((p) => p.id === socket.id);
     if (player) {
-      console.log(`Player ${player.name} has disconnected`);
+      log(`Player ${player.name} has disconnected`);
       players = players.filter((p) => p.id !== socket.id);
     }
     updateClientsInRoom(roomId);
@@ -113,7 +114,7 @@ function updateClientsInRoom(roomId: string) {
 function restartGame(roomId: string) {
   const roomPlayers = players.filter((p) => p.roomId == roomId);
   roomPlayers.forEach((p) => (p.vote = undefined));
-  console.log(
+  log(
     `Restarted game with Players: ${roomPlayers.map((p) => p.name).join(', ')}`
   );
   io.to(roomId).emit('restart');
@@ -127,7 +128,7 @@ function logRooms() {
       const playersInRoom = players
         .filter((p) => p.roomId == room)
         .map((p) => p.name);
-      console.log(`Room: ${room} - Players: ${playersInRoom.join(', ')}`);
+      log(`Room: ${room} - Players: ${playersInRoom.join(', ')}`);
     }
   }
 }

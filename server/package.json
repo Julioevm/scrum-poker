@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon index.ts"
+    "start": "nodemon index.ts",
+    "dev": "NODE_ENV=develop nodemon index.ts"
   },
   "description": "The server for the scrum poker app. Using Socket.io",
   "dependencies": {
