@@ -26,7 +26,7 @@ const options = {
 const httpServer = createServer();
 const io = new Server(httpServer, options);
 log('Server running in development mode.');
-log(process.env.ORIGIN)
+log('origin ' + process.env.ORIGIN);
 // keeping the connection alive
 setInterval(() => {
   io.emit('ping');

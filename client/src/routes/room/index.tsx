@@ -63,9 +63,7 @@ const Room: FunctionComponent<Props> = (props) => {
 
   useEffect(() => {
     function createSocketAndPlayer(): void {
-      const newSocket = io(
-        `${server}?roomId=${roomId}&name=${player.name}`
-      );
+      const newSocket = io(`${server}?roomId=${roomId}&name=${player.name}`);
       stateStore.setState({ socket: newSocket });
       stateStore.setState({ player: { ...player, id: newSocket.id } });
     }
