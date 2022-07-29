@@ -2,7 +2,7 @@ import { Player, stateStore } from 'components/app';
 import NameModal from 'components/nameModal/NameModal';
 import VotingMenu from 'components/votingMenu/VotingMenu';
 import VotingResults from 'components/votingResults/VotingResults';
-import { h, Fragment } from 'preact';
+import { h, Fragment, FunctionComponent } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
 import { io, Socket } from 'socket.io-client';
 import style from './style.css';
@@ -11,23 +11,23 @@ interface Props {
   roomId: string;
 }
 
-function emitName(socket: Socket, name: string) {
-  socket.emit('name', name);
+function emitName(socket: Socket | null, name: string): void {
+  socket && socket.emit('name', name);
 }
 
-function getPlayerName() {
+function getPlayerName(): string {
   const stateName = stateStore.getState().player.name;
   return stateName && stateName != 'Guest' ? stateName : 'Guest';
 }
 
 function copyLink(roomId: string) {
-  return () => {
+  return (): void => {
     const link = `${window.location.origin}/room/${roomId}`;
     navigator.clipboard.writeText(link);
   };
 }
 
-const Room = (props: Props) => {
+const Room: FunctionComponent<Props> = (props) => {
   const { roomId } = props;
   const socket = stateStore((state) => state.socket);
   const [players, setPlayers] = useState<Player[]>([]);
@@ -41,19 +41,11 @@ const Room = (props: Props) => {
 
   const values = ['0', '0,5', '1', '3', '5', '8', '?'];
 
-  function updateName(name: string) {
+  function updateName(name: string): void {
     stateStore.setState({ player: { ...stateStore.getState().player, name } });
     setPlayer({ ...player, name });
-    emitName(socket!, name);
+    emitName(socket, name);
     setShowModal(false);
-  }
-
-  function createSocketAndPlayer() {
-    const newSocket = io(
-      `http://localhost:3000?roomId=${roomId}&name=${player.name}`
-    );
-    stateStore.setState({ socket: newSocket });
-    stateStore.setState({ player: { ...player, id: newSocket.id } });
   }
 
   function handlePlayerVote(value: string) {
@@ -63,43 +55,36 @@ const Room = (props: Props) => {
     };
   }
 
-  function handleRestart() {
+  function handleRestart(): void {
     socket?.emit('restart');
   }
 
-  function setSocketHandlers() {
-    if (!socket) return;
-
-    socket.on('update', (updatedPlayers: Player[]) => {
-      setPlayers(updatedPlayers);
-    });
-
-    socket.on('show', () => {
-      setShowVotes(true);
-    });
-
-    socket.on('restart', () => {
-      setShowVotes(false);
-    });
-
-    socket.on('ping', () => {
-      socket.emit('pong');
-    });
-  }
-
-  function unsubscribeEvents() {
-    if (socket) {
-      socket.off('ping');
-      socket.off('update');
-      socket.off('show');
-      socket.off('restart');
-    }
-  }
-
   useEffect(() => {
+    function createSocketAndPlayer(): void {
+      const newSocket = io(
+        `http://localhost:3000?roomId=${roomId}&name=${player.name}`
+      );
+      stateStore.setState({ socket: newSocket });
+      stateStore.setState({ player: { ...player, id: newSocket.id } });
+    }
+
     if (socket) {
       emitName(socket, player.name);
-      setSocketHandlers();
+      socket.on('update', (updatedPlayers: Player[]) => {
+        setPlayers(updatedPlayers);
+      });
+
+      socket.on('show', () => {
+        setShowVotes(true);
+      });
+
+      socket.on('restart', () => {
+        setShowVotes(false);
+      });
+
+      socket.on('ping', () => {
+        socket.emit('pong');
+      });
     } else {
       createSocketAndPlayer();
     }
@@ -107,9 +92,14 @@ const Room = (props: Props) => {
     stateStore.setState({ room: roomId });
 
     return (): void => {
-      unsubscribeEvents();
+      if (socket) {
+        socket.off('ping');
+        socket.off('update');
+        socket.off('show');
+        socket.off('restart');
+      }
     };
-  }, [socket]);
+  }, [socket, player, roomId]);
 
   return (
     <>
@@ -117,19 +107,27 @@ const Room = (props: Props) => {
         <NameModal
           name={player.name}
           onSubmit={updateName}
-          onCancel={() => setShowModal(false)}
+          onCancel={(): void => setShowModal(false)}
         />
       )}
       <div class={style.room}>
-        <div class={style.roomName}>
-          Room: {roomId}
-          <button onClick={copyLink(roomId)}>Copy Link</button>
+        <div class={style.playerName}>
+          <h2>Welcome, {player.name}.</h2>{' '}
+          <button class="buttonLink" onClick={(): void => setShowModal(true)}>
+            Change Name
+          </button>
         </div>
-        <p>Welcome, {player.name}.</p>{' '}
-        <button onClick={() => setShowModal(true)}>Change Name</button>
+        <div class={style.roomName}>
+          Room: {roomId}{' '}
+          <button class="buttonLink" onClick={copyLink(roomId)}>
+            Copy Link
+          </button>
+        </div>
         <VotingResults show={showVotes} players={players} />
         <VotingMenu values={values} handlePlayerVote={handlePlayerVote} />
-        <button onClick={handleRestart}>Restart</button>
+        <button onClick={handleRestart}>
+          {showVotes ? 'New Round' : 'Restart'}
+        </button>
       </div>
     </>
   );
