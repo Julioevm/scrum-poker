@@ -5,6 +5,7 @@ import VotingResults from 'components/votingResults/VotingResults';
 import { h, Fragment, FunctionComponent } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
 import { io, Socket } from 'socket.io-client';
+import { getServerURL } from 'Utils/utils';
 import style from './style.css';
 
 interface Props {
@@ -28,10 +29,9 @@ function copyLink(roomId: string) {
 }
 
 const Room: FunctionComponent<Props> = (props) => {
+  const server = getServerURL();
   const { roomId } = props;
   const socket = stateStore((state) => state.socket);
-  console.log(socket);
-  
   const [players, setPlayers] = useState<Player[]>([]);
   const [player, setPlayer] = useState<Player>({
     id: '0',
@@ -64,7 +64,7 @@ const Room: FunctionComponent<Props> = (props) => {
   useEffect(() => {
     function createSocketAndPlayer(): void {
       const newSocket = io(
-        `http://localhost:3000?roomId=${roomId}&name=${player.name}`
+        `${server}?roomId=${roomId}&name=${player.name}`
       );
       stateStore.setState({ socket: newSocket });
       stateStore.setState({ player: { ...player, id: newSocket.id } });
@@ -88,8 +88,6 @@ const Room: FunctionComponent<Props> = (props) => {
         socket.emit('pong');
       });
     } else {
-      console.log('no socket');
-
       createSocketAndPlayer();
     }
 
