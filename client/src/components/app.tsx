@@ -25,7 +25,7 @@ export const stateStore = create<StateStore>(() => ({
 }));
 
 const App: FunctionalComponent = () => {
-  const handleRoute = async (e: { url: any }) => {
+  const handleRoute = async (e: { url: string }): Promise<void> => {
     const room = stateStore.getState().room;
 
     if (room && !e.url.includes(room)) {

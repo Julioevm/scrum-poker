@@ -12,7 +12,7 @@ const Home: FunctionalComponent = () => {
     const newSocket = io('http://127.0.0.1:3000');
     stateStore.setState({ socket: newSocket });
     const socket = stateStore.getState().socket;
-    socket!.on('room', (roomId: string) => {
+    socket && socket.on('room', (roomId: string) => {
       route(`/room/${roomId}`);
     });
   }
