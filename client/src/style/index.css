@@ -1,21 +1,59 @@
+:root{
+	--phone: 600px;
+	--tablet: 950px;
+	--laptop: 1300;
+	--color-link: #0070f3;
+	--color-link-dark: #004ba0;
+	--color-primary: #673AB7;
+	--color-primary-dark: #531cb3;
+	--color-background: #FAFAFA;
+	--color-text: #444;
+	--color-text-light: #FAFAFA;
+}
+
+
 html, body {
 	height: 100%;
 	width: 100%;
 	padding: 0;
 	margin: 0;
-	background: #FAFAFA;
+	background: var(--color-background);
 	font-family: 'Helvetica Neue', arial, sans-serif;
 	font-weight: 400;
-	color: #444;
+	color: var(--color-text);
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
 
+
 * {
 	box-sizing: border-box;
-	--phone: 600px;
-  	--tablet: 950px;
-  	--laptop: 1300;
+}
+
+button {
+	background: var(--color-primary);
+	color: var(--color-text-light);
+	border: none;
+	border-radius: 5px;
+	padding: 5px 10px;
+	margin: 4px;
+	cursor: pointer;
+}
+
+button:hover, button:active {
+	background: var(--color-primary-dark);
+}
+
+.buttonLink {
+	border: none;
+	background: none;
+	color: var(--color-link);
+	cursor: pointer;
+}
+
+.buttonLink:hover, .buttonLink:active {
+	background: none;
+	color: var(--color-link-dark);
 }
 
 #preact_root {
