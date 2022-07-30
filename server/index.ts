@@ -16,9 +16,12 @@ interface Player {
   vote: string | undefined;
 }
 
+const port = process.env.PORT || 3000;
+const origin = process.env.ORIGIN || `http://127.0.0.1:8080`;
+
 const options = {
   cors: {
-    origin: process.env.ORIGIN || 'http://127.0.0.1:8080',
+    origin: origin,
     methods: ['GET', 'POST'],
   },
 };
@@ -26,7 +29,7 @@ const options = {
 const httpServer = createServer();
 const io = new Server(httpServer, options);
 log('Server running in development mode.');
-log('origin ' + process.env.ORIGIN);
+log('Origin: ' + origin);
 // keeping the connection alive
 setInterval(() => {
   io.emit('ping');
@@ -37,8 +40,8 @@ app.get('/', (req, res) => {
   res.send('<h1>Service Up!</h1>');
 });
 
-httpServer.listen(process.env.PORT || 3000, () => {
-  log('listening on *:3000');
+httpServer.listen(port, () => {
+  log(`listening on *:${port}`);
 });
 
 let players: Player[] = [];
