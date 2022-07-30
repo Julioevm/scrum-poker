@@ -7,7 +7,11 @@
     "build": "preact build",
     "serve": "sirv build --port 8080 --cors --single",
     "dev": "preact watch --refresh",
-    "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
+    "lint": "eslint . --cache --ext .ts,.tsx",
+		"lint:fix": "eslint . --cache --ext .ts,.tsx --fix",
+		"prettier": "prettier --check .",
+		"prettier:fix": "prettier --check . --write",
+		"tsc": "tsc --noEmit",
     "test": "jest"
   },
   "eslintConfig": {

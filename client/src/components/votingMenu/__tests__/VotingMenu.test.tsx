@@ -8,6 +8,8 @@ describe('VotingMenu', () => {
   const props = {
     values,
     handlePlayerVote,
+    disabled: false,
+    vote: undefined,
   };
 
   it('renders a button for each value', () => {
@@ -15,4 +17,4 @@ describe('VotingMenu', () => {
     const buttons = wrapper.getAllByRole('button');
     expect(buttons.length).toBe(values.length);
   });
-});   
+});
