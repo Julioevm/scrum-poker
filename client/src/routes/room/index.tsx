@@ -124,7 +124,7 @@ const Room: FunctionComponent<Props> = (props) => {
           </button>
         </div>
         <VotingResults show={showVotes} players={players} />
-        <VotingMenu values={values} handlePlayerVote={handlePlayerVote} />
+        <VotingMenu values={values} handlePlayerVote={handlePlayerVote} disabled={showVotes} vote={player.vote}/>
         <button onClick={handleRestart}>
           {showVotes ? 'New Round' : 'Restart'}
         </button>

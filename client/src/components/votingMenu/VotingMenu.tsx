@@ -1,19 +1,30 @@
-import { FunctionalComponent, h } from 'preact';
+import { h } from 'preact';
+import style from './style.css';
 
 interface Props {
   values: string[];
   handlePlayerVote: Function;
-}
-function votingButtons(values: string[], handlePlayerVote: Function) {
-  return values.map((value) => <button onClick={handlePlayerVote(value)}>{value}</button>);
+  disabled: boolean;
+  vote: string | undefined;
 }
 
 function votingMenu(props: Props) {
-  const { values, handlePlayerVote } = props;
+  const { values, handlePlayerVote, disabled, vote } = props;
+  const buttonClass = (value: string) => {
+    return value === vote ? style.voted : disabled ? style.disabled : undefined;
+  };
+
   return (
-    <div>
+    <div class={style.menuWrapper}>
       <p>Please vote:</p>
-      {votingButtons(values, handlePlayerVote)}
+      {values.map((value) => (
+        <button
+          onClick={!disabled ? handlePlayerVote(value) : undefined}
+          class={buttonClass(value)}
+        >
+          {value}
+        </button>
+      ))}
     </div>
   );
 }

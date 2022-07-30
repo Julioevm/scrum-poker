@@ -1,0 +1,14 @@
+.menuWrapper {
+    margin: 10px 0;
+
+}
+.disabled {
+    pointer-events: none;
+    background: var(--color-primary-transparent);
+}
+
+.voted {
+    font-weight: bold;
+    background-color: var(--color-primary-dark);
+    pointer-events: none;
+}

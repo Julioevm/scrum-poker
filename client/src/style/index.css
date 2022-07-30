@@ -6,6 +6,7 @@
 	--color-link-dark: #004ba0;
 	--color-primary: #673AB7;
 	--color-primary-dark: #531cb3;
+	--color-primary-transparent: rgba(103, 58, 179, 0.5);
 	--color-background: #FAFAFA;
 	--color-text: #444;
 	--color-text-light: #FAFAFA;
@@ -38,6 +39,7 @@ button {
 	padding: 5px 10px;
 	margin: 4px;
 	cursor: pointer;
+	font-size: 1.1rem;
 }
 
 button:hover, button:active {
@@ -49,6 +51,7 @@ button:hover, button:active {
 	background: none;
 	color: var(--color-link);
 	cursor: pointer;
+	font-size: 1rem;
 }
 
 .buttonLink:hover, .buttonLink:active {
