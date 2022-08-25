@@ -41,7 +41,7 @@ const Room: FunctionComponent<Props> = (props) => {
   const [showVotes, setShowVotes] = useState(false);
   const [showModal, setShowModal] = useState(player.name === 'Guest');
 
-  const values = ['0', '0,5', '1', '3', '5', '8', '?'];
+  const values = ['0', '0,5', '1', '2', '3', '5', '8', '?'];
 
   function updateName(name: string): void {
     stateStore.setState({ player: { ...stateStore.getState().player, name } });
@@ -124,7 +124,12 @@ const Room: FunctionComponent<Props> = (props) => {
           </button>
         </div>
         <VotingResults show={showVotes} players={players} />
-        <VotingMenu values={values} handlePlayerVote={handlePlayerVote} disabled={showVotes} vote={player.vote}/>
+        <VotingMenu
+          values={values}
+          handlePlayerVote={handlePlayerVote}
+          disabled={showVotes}
+          vote={player.vote}
+        />
         <button onClick={handleRestart}>
           {showVotes ? 'New Round' : 'Restart'}
         </button>
