@@ -80,6 +80,7 @@ const Room: FunctionComponent<Props> = (props) => {
 
       socket.on('restart', () => {
         setShowVotes(false);
+        setPlayer({ ...player, vote: undefined });
       });
 
       socket.on('ping', () => {
