@@ -29,7 +29,7 @@ const options = {
 const httpServer = createServer();
 const io = new Server(httpServer, options);
 log('Server running in development mode.');
-log('Origin: ' + origin);
+console.log('Origin: ' + origin);
 // keeping the connection alive
 setInterval(() => {
   io.emit('ping');
@@ -41,7 +41,7 @@ app.get('/', (req, res) => {
 });
 
 httpServer.listen(port, () => {
-  log(`listening on *:${port}`);
+  console.log(`listening on *:${port}`);
 });
 
 let players: Player[] = [];
