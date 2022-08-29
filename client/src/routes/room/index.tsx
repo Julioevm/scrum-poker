@@ -1,9 +1,11 @@
 import { Player, stateStore } from 'components/app';
+import IdleModal from 'components/idleModal/IdleModal';
 import NameModal from 'components/nameModal/NameModal';
 import VotingMenu from 'components/votingMenu/VotingMenu';
 import VotingResults from 'components/votingResults/VotingResults';
 import { h, Fragment, FunctionComponent } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
+import { useIdleTimer } from 'react-idle-timer';
 import { io, Socket } from 'socket.io-client';
 import { getServerURL } from 'Utils/utils';
 import style from './style.css';
@@ -41,6 +43,15 @@ const Room: FunctionComponent<Props> = (props) => {
   const isNameSync = useRef(false);
   const [showVotes, setShowVotes] = useState(false);
   const [showModal, setShowModal] = useState(player.name === 'Guest');
+  const [showIdleModal, setShowIdleModal] = useState(false);
+
+  const onIdle = () => {
+    setShowIdleModal(true);
+    socket?.disconnect();
+  };
+
+  const IDLE_TIME = 1000 * 60 * 20;
+  const idleTimer = useIdleTimer({ onIdle, timeout: IDLE_TIME });
 
   const values = ['0', '0,5', '1', '2', '3', '5', '8', '?'];
 
@@ -120,6 +131,7 @@ const Room: FunctionComponent<Props> = (props) => {
           onCancel={(): void => setShowModal(false)}
         />
       )}
+      {showIdleModal && <IdleModal />}
       <div class={style.room}>
         <div class={style.playerName}>
           <h2>Welcome, {player.name}.</h2>{' '}

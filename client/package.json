@@ -8,10 +8,10 @@
     "serve": "sirv build --port 8080 --cors --single",
     "dev": "preact watch --refresh",
     "lint": "eslint . --cache --ext .ts,.tsx",
-		"lint:fix": "eslint . --cache --ext .ts,.tsx --fix",
-		"prettier": "prettier --check .",
-		"prettier:fix": "prettier --check . --write",
-		"tsc": "tsc --noEmit",
+    "lint:fix": "eslint . --cache --ext .ts,.tsx --fix",
+    "prettier": "prettier --check .",
+    "prettier:fix": "prettier --check . --write",
+    "tsc": "tsc --noEmit",
     "test": "jest"
   },
   "eslintConfig": {
@@ -28,6 +28,7 @@
     "preact": "^10.3.1",
     "preact-render-to-string": "^5.1.4",
     "preact-router": "^3.2.1",
+    "react-idle-timer": "^5.4.1",
     "socket.io-client": "^4.5.1",
     "zustand": "^4.0.0"
   },

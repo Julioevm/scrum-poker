@@ -9259,6 +9259,11 @@ rc@1.2.8, rc@^1.2.8:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
+react-idle-timer@^5.4.1:
+  version "5.4.1"
+  resolved "https://registry.npmjs.org/react-idle-timer/-/react-idle-timer-5.4.1.tgz#4f05e5d2a41656e78fb78a30a4bc232d3964b8f5"
+  integrity sha512-Pn0ede5OBeUxkIdnGevKAcVtdMnzRzFgBI6k2DC3gDbDCqRSePblxKH6Lbb0ncLzwaw9hnZfe3/Z8Bj1HA8khA==
+
 react-is@^16.13.1:
   version "16.13.1"
   resolved "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
