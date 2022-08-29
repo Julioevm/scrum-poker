@@ -22,7 +22,7 @@
     align-items: center;
 }
 
-div:has(button) {
+.modalContent form > div{
     display: flex;
     justify-content: space-around;
     align-items: center;
