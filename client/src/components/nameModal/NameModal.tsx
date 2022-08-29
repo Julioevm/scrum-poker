@@ -1,6 +1,6 @@
+import Modal from 'components/modal/modal';
 import { FunctionalComponent, h } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
-import style from './style.css';
 
 interface Props {
   name: string;
@@ -24,33 +24,26 @@ const NameModal: FunctionalComponent<Props> = (props) => {
   }, []);
 
   return (
-    <div class={style.modal}>
-      <div class={style.modalContent}>
-        <div class="modal-header">
-          <h2>Enter your name</h2>
+    <Modal title="Enter your name">
+      <form>
+        <input
+          label="name"
+          type="text"
+          value={name}
+          onInput={handleChange}
+          ref={input}
+          placeholder={name}
+        />
+        <div>
+          <button class="button" onClick={handleSubmit}>
+            Submit
+          </button>
+          <button class="button" onClick={props.onCancel}>
+            Cancel
+          </button>
         </div>
-        <div class="modal-body">
-          <form>
-            <input
-              label="name"
-              type="text"
-              value={name}
-              onInput={handleChange}
-              ref={input}
-              placeholder={name}
-            />
-            <div class={style.modalButtons}>
-              <button class="button" onClick={handleSubmit}>
-                Submit
-              </button>
-              <button class="button" onClick={props.onCancel}>
-                Cancel
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+      </form>
+    </Modal>
   );
 };
 
