@@ -75,10 +75,7 @@ io.on('connection', (socket: Socket) => {
     }
     log(`Player ${player!.name} voted ${player!.vote}`);
 
-    const playersInRoom = players.filter((p) => p.roomId == roomId);
-    if (playersInRoom.every((p) => p.vote)) {
-      io.to(roomId).emit('show');
-    }
+    checkAllPlayersVote(roomId);
     updateClientsInRoom(roomId);
   });
 
@@ -96,6 +93,7 @@ io.on('connection', (socket: Socket) => {
       log(`Player ${player.name} has disconnected`);
       players = players.filter((p) => p.id !== socket.id);
     }
+    checkAllPlayersVote(roomId);
     updateClientsInRoom(roomId);
   }
 
@@ -133,5 +131,12 @@ function logRooms() {
         .map((p) => p.name);
       log(`Room: ${room} - Players: ${playersInRoom.join(', ')}`);
     }
+  }
+}
+
+function checkAllPlayersVote(roomId: string) {
+  const playersInRoom = players.filter((p) => p.roomId == roomId);
+  if (playersInRoom.every((p) => p.vote)) {
+    io.to(roomId).emit('show');
   }
 }
