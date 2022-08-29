@@ -3,7 +3,7 @@ import NameModal from 'components/nameModal/NameModal';
 import VotingMenu from 'components/votingMenu/VotingMenu';
 import VotingResults from 'components/votingResults/VotingResults';
 import { h, Fragment, FunctionComponent } from 'preact';
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { io, Socket } from 'socket.io-client';
 import { getServerURL } from 'Utils/utils';
 import style from './style.css';
@@ -38,6 +38,7 @@ const Room: FunctionComponent<Props> = (props) => {
     name: getPlayerName(),
     vote: undefined,
   });
+  const isNameSync = useRef(false);
   const [showVotes, setShowVotes] = useState(false);
   const [showModal, setShowModal] = useState(player.name === 'Guest');
 
@@ -61,6 +62,13 @@ const Room: FunctionComponent<Props> = (props) => {
     socket?.emit('restart');
   }
 
+  function syncName() {
+    if (!isNameSync.current) {
+      emitName(socket, player.name);
+      isNameSync.current = true;
+    }
+  }
+
   useEffect(() => {
     function createSocketAndPlayer(): void {
       const newSocket = io(`${server}?roomId=${roomId}&name=${player.name}`);
@@ -69,7 +77,8 @@ const Room: FunctionComponent<Props> = (props) => {
     }
 
     if (socket) {
-      emitName(socket, player.name);
+      syncName();
+
       socket.on('update', (updatedPlayers: Player[]) => {
         setPlayers(updatedPlayers);
       });
