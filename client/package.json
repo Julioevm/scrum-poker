@@ -33,6 +33,7 @@
     "zustand": "^4.0.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/preact": "^3.2.2",
     "@types/enzyme": "^3.10.5",
     "@types/jest": "^26.0.8",

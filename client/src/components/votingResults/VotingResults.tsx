@@ -10,7 +10,10 @@ interface Props {
 function playerVotes(players: Player[], show: boolean) {
   return players.map((player) => (
     <div>
-      <div class={player.vote ? style.voted : undefined}>
+      <div
+        class={player.vote ? style.voted : undefined}
+        data-testid="player-vote-line"
+      >
         {player.name}{' '}
         {show
           ? `voted ${player.vote}`
