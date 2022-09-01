@@ -81,12 +81,6 @@ const Room: FunctionComponent<Props> = (props) => {
   }
 
   useEffect(() => {
-    function createSocketAndPlayer(): void {
-      const newSocket = io(`${server}?roomId=${roomId}&name=${player.name}`);
-      stateStore.setState({ socket: newSocket });
-      stateStore.setState({ player: { ...player, id: newSocket.id } });
-    }
-
     if (socket) {
       syncName();
 
@@ -100,14 +94,18 @@ const Room: FunctionComponent<Props> = (props) => {
 
       socket.on('restart', () => {
         setShowVotes(false);
-        setPlayer({ ...player, vote: undefined });
+        setPlayer((p) => {
+          return { ...p, vote: undefined };
+        });
       });
 
       socket.on('ping', () => {
         socket.emit('pong');
       });
     } else {
-      createSocketAndPlayer();
+      const newSocket = io(`${server}?roomId=${roomId}&name=${player.name}`);
+      stateStore.setState({ socket: newSocket });
+      stateStore.setState({ player: { ...player, id: newSocket.id } });
     }
 
     stateStore.setState({ room: roomId });
@@ -120,7 +118,7 @@ const Room: FunctionComponent<Props> = (props) => {
         socket.off('restart');
       }
     };
-  }, [socket, player, roomId]);
+  }, [socket, roomId]);
 
   return (
     <>
