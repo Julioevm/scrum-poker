@@ -33,12 +33,13 @@ const NameModal: FunctionalComponent<Props> = (props) => {
           onInput={handleChange}
           ref={input}
           placeholder={name}
+          data-testid="name-input"
         />
         <div>
           <button class="button" onClick={handleSubmit}>
             Submit
           </button>
-          <button class="button" onClick={props.onCancel}>
+          <button class="button" onClick={props.onCancel} type="button">
             Cancel
           </button>
         </div>
