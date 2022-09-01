@@ -1,10 +1,10 @@
 import { FunctionalComponent, h } from 'preact';
 import { Route, Router } from 'preact-router';
 
-import Home from '../routes/home';
-import Room from '../routes/room';
-import NotFoundPage from '../routes/notfound';
-import Header from './header';
+import Home from '../routes/home/home';
+import Room from '../routes/room/room';
+import NotFoundPage from '../routes/notfound/notFound';
+import Header from './header/header';
 import create from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Socket } from 'socket.io-client';
