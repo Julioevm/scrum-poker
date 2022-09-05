@@ -5,7 +5,7 @@
 	--color-link: #0070f3;
 	--color-link-dark: #004ba0;
 	--color-primary: #673AB7;
-	--color-primary-dark: #531cb3;
+	--color-primary-alt: #531cb3;
 	--color-primary-transparent: rgba(103, 58, 179, 0.5);
 	--color-background: #FAFAFA;
 	--color-text: #444;
@@ -17,7 +17,7 @@
 	--color-text-contrast: rgb(190, 190, 190);
 	--color-background: #292929;
 	--color-primary: #531cb3;
-	--color-primary-dark: #673AB7;
+	--color-primary-alt: #673AB7;
 	--color-primary-transparent: rgba(103, 58, 179, 0.5);
 	color-scheme: dark;
 }
@@ -56,7 +56,7 @@ button {
 }
 
 button:hover, button:active {
-	background: var(--color-primary-dark);
+	background: var(--color-primary-alt);
 }
 
 .buttonLink {

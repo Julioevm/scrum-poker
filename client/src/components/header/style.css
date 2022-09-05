@@ -1,5 +1,8 @@
 .header {
 	position: fixed;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
 	left: 0;
 	top: 0;
 	width: 100%;
@@ -11,8 +14,8 @@
 }
 
 .header h1 {
-	float: left;
 	margin: 0;
+	margin-right: auto;
 	padding: 0 15px;
 	font-size: 24px;
 	line-height: 56px;
@@ -21,7 +24,6 @@
 }
 
 .header nav {
-	float: right;
 	font-size: 100%;
 }
 
@@ -40,9 +42,9 @@
 
 .header nav a:hover,
 .header nav a:active {
-	background: rgba(0,0,0,0.2);
+	background: var(--color-primary-alt);
 }
 
 .header nav a.active {
-	background: rgba(0,0,0,0.4);
+	background: var(--color-primary-alt);
 }
