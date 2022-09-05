@@ -19,6 +19,7 @@ function votingMenu(props: Props) {
       <p>Please vote:</p>
       {values.map((value) => (
         <button
+          key={value}
           onClick={!disabled ? handlePlayerVote(value) : undefined}
           class={buttonClass(value)}
         >

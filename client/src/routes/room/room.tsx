@@ -51,7 +51,7 @@ const Room: FunctionComponent<Props> = (props) => {
   };
 
   const IDLE_TIME = 1000 * 60 * 20;
-  const idleTimer = useIdleTimer({ onIdle, timeout: IDLE_TIME });
+  useIdleTimer({ onIdle, timeout: IDLE_TIME });
 
   const values = ['0', '0,5', '1', '2', '3', '5', '8', '?'];
 

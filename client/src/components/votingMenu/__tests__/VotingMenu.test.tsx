@@ -1,6 +1,6 @@
 import { h } from 'preact';
 import VotingMenu from '../VotingMenu';
-import { render, fireEvent, screen } from '@testing-library/preact';
+import { render } from '@testing-library/preact';
 
 describe('VotingMenu', () => {
   const values = ['0', '0,5', '1', '3', '5', '8', '?'];

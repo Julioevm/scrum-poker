@@ -8,8 +8,8 @@ interface Props {
 }
 
 function playerVotes(players: Player[], show: boolean) {
-  return players.map((player) => (
-    <div>
+  return players.map((player, index) => (
+    <div key={index}>
       <div
         class={player.vote ? style.voted : undefined}
         data-testid="player-vote-line"
