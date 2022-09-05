@@ -1,6 +1,6 @@
 import { Player, stateStore } from 'components/app';
-import IdleModal from 'components/idleModal/IdleModal';
-import NameModal from 'components/nameModal/NameModal';
+import IdleModal from 'components/idleModal/idleModal';
+import NameModal from 'components/nameModal/nameModal';
 import VotingMenu from 'components/votingMenu/VotingMenu';
 import VotingResults from 'components/votingResults/VotingResults';
 import { h, Fragment, FunctionComponent } from 'preact';

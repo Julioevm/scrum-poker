@@ -14,7 +14,7 @@
 
 [data-theme='dark'] {
 	--color-text: white;
-	--color-text-contrast: grey;
+	--color-text-contrast: rgb(190, 190, 190);
 	--color-background: #292929;
 	--color-primary: #531cb3;
 	--color-primary-dark: #673AB7;

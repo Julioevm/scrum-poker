@@ -8,6 +8,7 @@ import Header from './header/header';
 import create from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Socket } from 'socket.io-client';
+import { getDefaultTheme } from 'Utils/utils';
 
 export interface Player {
   id: string;
@@ -27,26 +28,30 @@ export const stateStore = create<StateStore>()(
       socket: null,
       player: { id: '0', name: 'Guest', vote: undefined },
       room: undefined,
-      theme: '',
+      theme: getDefaultTheme(),
     }),
     {
-      name: 'session-storage',
+      name: 'scrum-poker-session',
       getStorage: () => sessionStorage,
-      partialize: (state) => ({ player: state.player, theme: state.theme }),
+      partialize: (state) => ({ player: state.player }),
     }
   )
 );
 
-const getDefaultTheme = () => {
-  const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  console.log(defaultDark);
-  const theme = defaultDark ? 'dark' : 'light';
-  stateStore.setState({ theme: theme });
-  return theme;
-};
+export const themeStore = create<{ theme: string }>()(
+  persist(
+    (set) => ({
+      theme: getDefaultTheme(),
+    }),
+    {
+      name: 'scrum-poker-theme',
+      getStorage: () => localStorage,
+    }
+  )
+);
 
 const App: FunctionalComponent = () => {
-  const theme = stateStore.getState().theme || getDefaultTheme();
+  const theme = themeStore((state) => state.theme);
   const handleRoute = async (e: { url: string }): Promise<void> => {
     const room = stateStore.getState().room;
 
@@ -54,11 +59,6 @@ const App: FunctionalComponent = () => {
       stateStore.getState().socket?.emit('leave');
       stateStore.setState({ socket: null });
     }
-  };
-
-  const switchTheme = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
-    stateStore.setState({ theme: theme });
   };
 
   return (
