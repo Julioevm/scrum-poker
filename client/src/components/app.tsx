@@ -18,6 +18,7 @@ interface StateStore {
   socket: Socket | null;
   player: Player;
   room: string | undefined;
+  theme: string;
 }
 
 export const stateStore = create<StateStore>()(
@@ -26,16 +27,26 @@ export const stateStore = create<StateStore>()(
       socket: null,
       player: { id: '0', name: 'Guest', vote: undefined },
       room: undefined,
+      theme: '',
     }),
     {
       name: 'session-storage',
       getStorage: () => sessionStorage,
-      partialize: (state) => ({ player: state.player }),
+      partialize: (state) => ({ player: state.player, theme: state.theme }),
     }
   )
 );
 
+const getDefaultTheme = () => {
+  const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  console.log(defaultDark);
+  const theme = defaultDark ? 'dark' : 'light';
+  stateStore.setState({ theme: theme });
+  return theme;
+};
+
 const App: FunctionalComponent = () => {
+  const theme = stateStore.getState().theme || getDefaultTheme();
   const handleRoute = async (e: { url: string }): Promise<void> => {
     const room = stateStore.getState().room;
 
@@ -45,8 +56,13 @@ const App: FunctionalComponent = () => {
     }
   };
 
+  const switchTheme = () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    stateStore.setState({ theme: theme });
+  };
+
   return (
-    <div id="preact_root">
+    <div id="preact_root" data-theme={theme}>
       <Header />
       <Router onChange={handleRoute}>
         <Route path="/" component={Home} />
