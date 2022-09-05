@@ -3,7 +3,7 @@ export function getServerURL(): string {
 }
 
 export function getDefaultTheme() {
-  const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const defaultDark = window && window.matchMedia('(prefers-color-scheme: dark)').matches;
   const theme = defaultDark ? 'dark' : 'light';
   return theme;
 }
