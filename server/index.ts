@@ -54,9 +54,10 @@ io.on('connection', (socket: Socket) => {
     roomId = short.generate();
     socket.emit('room', roomId);
   }
-  socket.join(roomId!);
+  socket.join(roomId);
 
   players.push({ id: socket.id, name: name, roomId: roomId, vote: undefined });
+  updateClientsInRoom(roomId);
 
   socket.on('name', (name) => {
     const player = players.find((p) => p.id == socket.id);
@@ -65,7 +66,7 @@ io.on('connection', (socket: Socket) => {
       log(`Changing name from ${player.name} to ${name}`);
       player.name = name;
     }
-    updateClientsInRoom(roomId!);
+    updateClientsInRoom(roomId);
   });
 
   socket.on('vote', (vote: string) => {

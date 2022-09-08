@@ -40,7 +40,6 @@ const Room: FunctionComponent<Props> = (props) => {
     name: getPlayerName(),
     vote: undefined,
   });
-  const isNameSync = useRef(false);
   const [showVotes, setShowVotes] = useState(false);
   const [showModal, setShowModal] = useState(player.name === 'Guest');
   const [showIdleModal, setShowIdleModal] = useState(false);
@@ -73,16 +72,9 @@ const Room: FunctionComponent<Props> = (props) => {
     socket?.emit('restart');
   }
 
-  function syncName() {
-    if (!isNameSync.current) {
-      emitName(socket, player.name);
-      isNameSync.current = true;
-    }
-  }
-
   useEffect(() => {
     if (socket) {
-      syncName();
+      emitName(socket, player.name);
 
       socket.on('update', (updatedPlayers: Player[]) => {
         setPlayers(updatedPlayers);
