@@ -1,6 +1,6 @@
 {
   "name": "scrum-poker-server",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "scripts": {
     "start": "nodemon index.ts",
