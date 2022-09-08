@@ -10,3 +10,7 @@ export function getDefaultTheme() {
   const theme = defaultDark ? 'dark' : 'light';
   return theme;
 }
+
+export function sanitize(str: string, limit = 24) {
+  return str ? str.substring(0, limit).replace(/[^a-zA-Z0-9]/g, '') : str;
+}

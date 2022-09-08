@@ -49,7 +49,7 @@ let players: Player[] = [];
 io.on('connection', (socket: Socket) => {
   log('A user connected ' + socket.id);
   let roomId = socket.handshake.query['roomId'] as string;
-  let name = socket.handshake.query['name'] as string;
+  let name = sanitize(socket.handshake.query['name'] as string);
   if (!roomId) {
     roomId = short.generate();
     socket.emit('room', roomId);
@@ -60,11 +60,12 @@ io.on('connection', (socket: Socket) => {
   updateClientsInRoom(roomId);
 
   socket.on('name', (name) => {
+    const cleanName = sanitize(name);
     const player = players.find((p) => p.id == socket.id);
-    log(`User entered name ${name}`);
-    if (player && player.name != name) {
-      log(`Changing name from ${player.name} to ${name}`);
-      player.name = name;
+    log(`User entered name ${cleanName}`);
+    if (player && player.name != cleanName) {
+      log(`Changing name from ${player.name} to ${cleanName}`);
+      player.name = cleanName;
     }
     updateClientsInRoom(roomId);
   });
@@ -140,4 +141,8 @@ function checkAllPlayersVote(roomId: string) {
   if (playersInRoom.every((p) => p.vote)) {
     io.to(roomId).emit('show');
   }
+}
+
+function sanitize(str: string, limit = 24) {
+  return str ? str.substring(0, limit).replace(/[^a-zA-Z0-9]/g, '') : str;
 }

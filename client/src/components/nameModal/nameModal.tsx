@@ -1,6 +1,7 @@
 import Modal from 'components/modal/modal';
 import { FunctionalComponent, h } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
+import { sanitize } from 'Utils/utils';
 
 interface Props {
   name: string;
@@ -16,7 +17,7 @@ const NameModal: FunctionalComponent<Props> = (props) => {
   };
 
   const handleChange = (e: any) => {
-    setName(e.target.value);
+    setName(sanitize(e.target.value));
   };
 
   useEffect(() => {
