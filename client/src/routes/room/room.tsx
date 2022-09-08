@@ -74,7 +74,12 @@ const Room: FunctionComponent<Props> = (props) => {
 
   useEffect(() => {
     if (socket) {
-      emitName(socket, player.name);
+      socket.on('connect', () => {
+        // If the player was in the middle of a vote send the vote back to the server.
+        player.vote && socket?.emit('vote', player.vote);
+        // Keep the name up to date in the sever after re-connections.
+        emitName(socket, player.name);
+      });
 
       socket.on('update', (updatedPlayers: Player[]) => {
         setPlayers(updatedPlayers);
