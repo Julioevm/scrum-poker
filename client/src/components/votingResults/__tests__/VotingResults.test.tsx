@@ -37,9 +37,15 @@ describe('VotingMenu', () => {
   });
 
   describe('with show = true', () => {
-    it('should display has voted if the player has voted', async () => {
+    it('should display has voted [vote] if the player has voted', async () => {
       render(<VotingResults players={[players[0]]} show={true} />);
       const line = await screen.queryByText(/John voted 4/);
+      expect(line).toBeVisible();
+    });
+
+    it('should display no vote for a player with undefined vote', async () => {
+      render(<VotingResults players={players} show={true} />);
+      const line = await screen.queryByText(/Payne has not voted/);
       expect(line).toBeVisible();
     });
   });

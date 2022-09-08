@@ -15,7 +15,7 @@ function playerVotes(players: Player[], show: boolean) {
         data-testid="player-vote-line"
       >
         {player.name}{' '}
-        {show
+        {show && player.vote
           ? `voted ${player.vote}`
           : player.vote
           ? 'has voted'
