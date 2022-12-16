@@ -1,53 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Header component should render 1`] = `
+exports[`toggle should render 1`] = `
 Object {
   "asFragment": [Function],
   "baseElement": <body>
     <div>
-      <header
-        class="header"
-      >
-        <h1>
-          Scrum Poker
-        </h1>
-        🌙
-        <div
-          class="switchWrapper"
-        >
-          <input
-            class="switchCheckbox"
-            data-testid="theme-toggle"
-            id="switch"
-            type="checkbox"
-          />
-          <label
-            class="switchLabel"
-            for="switch"
-          >
-            <span
-              class="switchButton"
-            />
-          </label>
-        </div>
-        <nav>
-          <a
-            class="active"
-            href="/"
-          >
-            Home
-          </a>
-        </nav>
-      </header>
-    </div>
-  </body>,
-  "container": <div>
-    <header
-      class="header"
-    >
-      <h1>
-        Scrum Poker
-      </h1>
       🌙
       <div
         class="switchWrapper"
@@ -67,15 +24,28 @@ Object {
           />
         </label>
       </div>
-      <nav>
-        <a
-          class="active"
-          href="/"
-        >
-          Home
-        </a>
-      </nav>
-    </header>
+    </div>
+  </body>,
+  "container": <div>
+    🌙
+    <div
+      class="switchWrapper"
+    >
+      <input
+        class="switchCheckbox"
+        data-testid="theme-toggle"
+        id="switch"
+        type="checkbox"
+      />
+      <label
+        class="switchLabel"
+        for="switch"
+      >
+        <span
+          class="switchButton"
+        />
+      </label>
+    </div>
   </div>,
   "debug": [Function],
   "findAllByAltText": [Function],

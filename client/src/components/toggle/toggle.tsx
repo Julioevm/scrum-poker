@@ -23,6 +23,7 @@ const Toggle: FunctionalComponent = () => {
           className={style.switchCheckbox}
           id={'switch'}
           type="checkbox"
+          data-testid="theme-toggle"
         />
         <label className={style.switchLabel} htmlFor={`switch`}>
           <span className={style.switchButton} />

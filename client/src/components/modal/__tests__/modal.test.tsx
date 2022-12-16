@@ -1,4 +1,4 @@
-import { h } from 'preact';
+import React, { h } from 'preact';
 import Modal from '../modal';
 import { render, screen } from '@testing-library/preact';
 import '@testing-library/jest-dom';
