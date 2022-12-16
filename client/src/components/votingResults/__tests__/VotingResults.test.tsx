@@ -2,6 +2,7 @@ import { h } from 'preact';
 import VotingResults from '../VotingResults';
 import { render, screen } from '@testing-library/preact';
 import '@testing-library/jest-dom';
+import React from 'preact';
 
 describe('VotingMenu', () => {
   const players = [
