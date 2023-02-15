@@ -12,8 +12,12 @@ dotenv.config();
 interface Player {
   id: string;
   name: string;
-  roomId: string;
   vote: string | undefined;
+}
+
+interface Room {
+  players: Player[];
+  finished: boolean;
 }
 
 const port = process.env.PORT || 3000;
@@ -44,7 +48,7 @@ httpServer.listen(port, () => {
   console.log(`listening on *:${port}`);
 });
 
-let players: Player[] = [];
+const rooms = new Map<String, Room>();
 
 io.on('connection', (socket: Socket) => {
   log('A user connected ' + socket.id);
@@ -56,12 +60,16 @@ io.on('connection', (socket: Socket) => {
   }
   socket.join(roomId);
 
-  players.push({ id: socket.id, name: name, roomId: roomId, vote: undefined });
+  const room = rooms.get(roomId) || {
+    players: [{ id: socket.id, name, vote: undefined }],
+    finished: false,
+  };
+  rooms.set(roomId, { ...room, players: [...room.players, { id: socket.id, name, vote: undefined }] });
   updateClientsInRoom(roomId);
 
   socket.on('name', (name) => {
     const cleanName = sanitize(name);
-    const player = players.find((p) => p.id == socket.id);
+    const player = rooms.get(roomId)?.players.find((p) => p.id === socket.id);
     log(`User entered name ${cleanName}`);
     if (player && player.name != cleanName) {
       log(`Changing name from ${player.name} to ${cleanName}`);
@@ -71,7 +79,7 @@ io.on('connection', (socket: Socket) => {
   });
 
   socket.on('vote', (vote: string) => {
-    let player = players.find((p) => p.id == socket.id);
+    const player = rooms.get(roomId)?.players.find((p) => p.id === socket.id);
     if (player) {
       player.vote = vote;
     }
@@ -82,64 +90,70 @@ io.on('connection', (socket: Socket) => {
   });
 
   socket.on('show', () => {
-    io.to(roomId).emit('show');
+    const room = rooms.get(roomId);
+    rooms.set(roomId, { players: room!.players, finished: true });
+    io.to(roomId).emit('update', rooms.get(roomId));
   });
 
   socket.on('restart', () => {
     restartGame(roomId);
   });
 
-  function disconnectPlayer() {
-    const player = players.find((p) => p.id === socket.id);
-    if (player) {
-      log(`Player ${player.name} has disconnected`);
-      players = players.filter((p) => p.id !== socket.id);
-    }
-    checkAllPlayersVote(roomId);
-    updateClientsInRoom(roomId);
-  }
+  socket.on('leave', () => disconnectPlayer(roomId, socket.id));
 
-  socket.on('leave', () => disconnectPlayer());
-
-  socket.on('disconnect', () => disconnectPlayer());
+  socket.on('disconnect', () => disconnectPlayer(roomId, socket.id));
 
   // keeping the connection alive
   socket.on('pong', () => {
-    players.find((p) => p.id == socket.id);
+    rooms.get(roomId)?.players.find((p) => p.id == socket.id);
   });
 });
 
+function disconnectPlayer(roomId: string, socketId: string) {
+  const player = rooms.get(roomId)?.players.find((p) => p.id === socketId);
+  if (player) {
+    log(`Player ${player.name} has disconnected`);
+    const room = rooms.get(roomId);
+    rooms.set(roomId, {
+      players: room!.players.filter((p) => p.id !== socketId),
+      finished: room!.finished,
+    });
+  }
+  checkAllPlayersVote(roomId);
+  updateClientsInRoom(roomId);
+}
+
 function updateClientsInRoom(roomId: string) {
-  const roomPlayers = players.filter((p) => p.roomId == roomId);
-  io.to(roomId).emit('update', roomPlayers);
+  const room = rooms.get(roomId);
+  io.to(roomId).emit('update', room);
 }
 
 function restartGame(roomId: string) {
-  const roomPlayers = players.filter((p) => p.roomId == roomId);
-  roomPlayers.forEach((p) => (p.vote = undefined));
-  log(
-    `Restarted game with Players: ${roomPlayers.map((p) => p.name).join(', ')}`
-  );
-  io.to(roomId).emit('restart');
-  io.to(roomId).emit('update', roomPlayers);
+  const room = rooms.get(roomId);
+  const players = room!.players.map((p) => {
+    return { ...p, vote: undefined };
+  });
+  rooms.set(roomId, { players: players, finished: false });
+  log(`Restarted game with Players: ${players.map((p) => p.name).join(', ')}`);
+  updateClientsInRoom(roomId);
 }
 
 function logRooms() {
-  const rooms = players.map((e) => e.roomId);
   if (rooms) {
-    for (const room of rooms.filter((val, i, arr) => arr.indexOf(val) == i)) {
-      const playersInRoom = players
-        .filter((p) => p.roomId == room)
-        .map((p) => p.name);
-      log(`Room: ${room} - Players: ${playersInRoom.join(', ')}`);
-    }
+    rooms.forEach((room, key) => {
+      const players = room.players.map((p) => p.name).join(', ');
+      log(
+        `Room: ${key} - Players: ${players} - Vote finished: ${room.finished}`
+      );
+    });
   }
 }
 
 function checkAllPlayersVote(roomId: string) {
-  const playersInRoom = players.filter((p) => p.roomId == roomId);
-  if (playersInRoom.every((p) => p.vote)) {
-    io.to(roomId).emit('show');
+  const playersInRoom = rooms.get(roomId)?.players;
+  if (playersInRoom?.every((p) => p.vote)) {
+    rooms.set(roomId, { players: playersInRoom, finished: true });
+    updateClientsInRoom(roomId);
   }
 }
 

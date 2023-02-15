@@ -4,3 +4,4 @@
 */settings.json
 client/.env
 client/.eslintcache
+coverage/
