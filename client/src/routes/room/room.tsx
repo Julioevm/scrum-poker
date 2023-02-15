@@ -14,6 +14,11 @@ interface Props {
   roomId: string;
 }
 
+interface Room {
+  players: Player[];
+  finished: boolean;
+}
+
 function emitName(socket: Socket | null, name: string): void {
   socket && socket.emit('name', name);
 }
@@ -34,13 +39,12 @@ const Room: FunctionComponent<Props> = (props) => {
   const server = getServerURL();
   const { roomId } = props;
   const socket = stateStore((state) => state.socket);
-  const [players, setPlayers] = useState<Player[]>([]);
+  const [room, setRoom] = useState<Room>({ players: [], finished: false });
   const [player, setPlayer] = useState<Player>({
     id: '0',
     name: getPlayerName(),
     vote: undefined,
   });
-  const [showVotes, setShowVotes] = useState(false);
   const [showModal, setShowModal] = useState(player.name === 'Guest');
   const [showIdleModal, setShowIdleModal] = useState(false);
 
@@ -49,7 +53,7 @@ const Room: FunctionComponent<Props> = (props) => {
     socket?.disconnect();
   };
 
-  const IDLE_TIME = 1000 * 60 * 20;
+  const IDLE_TIME = 1000 * 60 * 1; // 10 minutes
   useIdleTimer({ onIdle, timeout: IDLE_TIME });
 
   const values = ['0', '0,5', '1', '2', '3', '5', '8', '?'];
@@ -70,6 +74,9 @@ const Room: FunctionComponent<Props> = (props) => {
 
   function handleRestart(): void {
     socket?.emit('restart');
+    setPlayer((p) => {
+      return { ...p, vote: undefined };
+    });
   }
 
   useEffect(() => {
@@ -81,19 +88,12 @@ const Room: FunctionComponent<Props> = (props) => {
         emitName(socket, player.name);
       });
 
-      socket.on('update', (updatedPlayers: Player[]) => {
-        setPlayers(updatedPlayers);
-      });
-
-      socket.on('show', () => {
-        setShowVotes(true);
-      });
-
-      socket.on('restart', () => {
-        setShowVotes(false);
-        setPlayer((p) => {
-          return { ...p, vote: undefined };
-        });
+      socket.on('update', (updatedRoom: Room) => {
+        setRoom(updatedRoom);
+        setPlayer(
+          updatedRoom.players.find((p) => p.id === updatedRoom.players[0].id) ||
+            player
+        );
       });
 
       socket.on('ping', () => {
@@ -111,8 +111,6 @@ const Room: FunctionComponent<Props> = (props) => {
       if (socket) {
         socket.off('ping');
         socket.off('update');
-        socket.off('show');
-        socket.off('restart');
       }
     };
   }, [socket, roomId]);
@@ -140,15 +138,15 @@ const Room: FunctionComponent<Props> = (props) => {
             Copy Invite Link
           </button>
         </div>
-        <VotingResults show={showVotes} players={players} />
+        <VotingResults show={room.finished} players={room.players} />
         <VotingMenu
           values={values}
           handlePlayerVote={handlePlayerVote}
-          disabled={showVotes}
+          disabled={room.finished}
           vote={player.vote}
         />
         <button onClick={handleRestart}>
-          {showVotes ? 'New Round' : 'Restart'}
+          {room.finished ? 'New Round' : 'Restart'}
         </button>
       </div>
     </>
