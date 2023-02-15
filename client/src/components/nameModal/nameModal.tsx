@@ -35,6 +35,8 @@ const NameModal: FunctionalComponent<Props> = (props) => {
           ref={input}
           placeholder={name}
           data-testid="name-input"
+          maxLength={24}
+          name="name"
         />
         <div>
           <button class="button" onClick={handleSubmit}>
