@@ -60,11 +60,25 @@ io.on('connection', (socket: Socket) => {
   }
   socket.join(roomId);
 
-  const room = rooms.get(roomId) || {
-    players: [{ id: socket.id, name, vote: undefined }],
-    finished: false,
-  };
-  rooms.set(roomId, { ...room, players: [...room.players, { id: socket.id, name, vote: undefined }] });
+  if (rooms.get(roomId)) {
+    rooms.get(roomId)!.players.push({
+      id: socket.id,
+      name: name,
+      vote: undefined,
+    });
+  } else {
+    rooms.set(roomId, {
+      players: [
+        {
+          id: socket.id,
+          name: name,
+          vote: undefined,
+        },
+      ],
+      finished: false,
+    });
+  }
+
   updateClientsInRoom(roomId);
 
   socket.on('name', (name) => {
@@ -110,17 +124,27 @@ io.on('connection', (socket: Socket) => {
 });
 
 function disconnectPlayer(roomId: string, socketId: string) {
-  const player = rooms.get(roomId)?.players.find((p) => p.id === socketId);
+  const room = rooms.get(roomId);
+  const player = room?.players.find((p) => p.id === socketId);
   if (player) {
     log(`Player ${player.name} has disconnected`);
-    const room = rooms.get(roomId);
     rooms.set(roomId, {
       players: room!.players.filter((p) => p.id !== socketId),
       finished: room!.finished,
     });
+
+    // Delete empty rooms
+    rooms.get(roomId)!.players.length < 1 && deleteRoom(roomId);
   }
   checkAllPlayersVote(roomId);
   updateClientsInRoom(roomId);
+}
+
+function deleteRoom(roomId: string) {
+  if (rooms.has(roomId)) {
+    log(`Deleting room ${roomId}`);
+    rooms.delete(roomId);
+  }
 }
 
 function updateClientsInRoom(roomId: string) {
