@@ -53,7 +53,7 @@ const Room: FunctionComponent<Props> = (props) => {
     socket?.disconnect();
   };
 
-  const IDLE_TIME = 1000 * 60 * 1; // 10 minutes
+  const IDLE_TIME = 1000 * 60 * 5; // 5 minutes
   useIdleTimer({ onIdle, timeout: IDLE_TIME });
 
   const values = ['0', '0,5', '1', '2', '3', '5', '8', '?'];
