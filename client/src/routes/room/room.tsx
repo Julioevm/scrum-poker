@@ -91,8 +91,7 @@ const Room: FunctionComponent<Props> = (props) => {
       socket.on('update', (updatedRoom: Room) => {
         setRoom(updatedRoom);
         setPlayer(
-          updatedRoom.players.find((p) => p.id === updatedRoom.players[0].id) ||
-            player
+          updatedRoom.players.find((p) => p.id === socket.id) || player
         );
       });
 
