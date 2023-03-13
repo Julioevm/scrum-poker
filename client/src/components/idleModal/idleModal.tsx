@@ -13,10 +13,10 @@ const IdleModal: FunctionalComponent = () => {
   }, []);
 
   return (
-    <Modal title="Idle session disconnected">
+    <Modal title="Idle...">
       <div>
         <button class="button" onClick={handleSubmit} ref={button}>
-          Reload
+          Re-connect
         </button>
       </div>
     </Modal>
