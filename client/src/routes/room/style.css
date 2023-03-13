@@ -1,6 +1,6 @@
 .room {
-    margin: 24px auto;
-    padding: 56px 20px;
+    margin: 0 auto;
+    padding: 64px 20px;
     min-height: 100%;
     width: min(600px, 100%);
     display: flex;
