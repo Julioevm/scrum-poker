@@ -39,6 +39,7 @@ const Room: FunctionComponent<Props> = (props) => {
   const server = getServerURL();
   const { roomId } = props;
   const socket = stateStore((state) => state.socket);
+  const [loading, setLoading] = useState(true);
   const [room, setRoom] = useState<Room>({ players: [], finished: false });
   const [player, setPlayer] = useState<Player>({
     id: '0',
@@ -82,6 +83,7 @@ const Room: FunctionComponent<Props> = (props) => {
   useEffect(() => {
     if (socket) {
       socket.on('connect', () => {
+        setLoading(false);
         // If the player was in the middle of a vote send the vote back to the server.
         player.vote && socket?.emit('vote', player.vote);
         // Keep the name up to date in the sever after re-connections.
@@ -138,12 +140,16 @@ const Room: FunctionComponent<Props> = (props) => {
           </button>
         </div>
         <VotingResults show={room.finished} players={room.players} />
-        <VotingMenu
-          values={values}
-          handlePlayerVote={handlePlayerVote}
-          disabled={room.finished}
-          vote={player.vote}
-        />
+        {loading ? (
+          <p>Loading...</p>
+        ) : (
+          <VotingMenu
+            values={values}
+            handlePlayerVote={handlePlayerVote}
+            disabled={room.finished}
+            vote={player.vote}
+          />
+        )}
         <button onClick={handleRestart}>
           {room.finished ? 'New Round' : 'Restart'}
         </button>
