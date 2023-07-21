@@ -4,7 +4,7 @@ import NameModal from 'components/nameModal/nameModal';
 import VotingMenu from 'components/votingMenu/VotingMenu';
 import VotingResults from 'components/votingResults/VotingResults';
 import { h, Fragment, FunctionComponent } from 'preact';
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 import { useIdleTimer } from 'react-idle-timer';
 import { io, Socket } from 'socket.io-client';
 import { getServerURL } from 'Utils/utils';
@@ -20,7 +20,7 @@ interface Room {
 }
 
 function emitName(socket: Socket | null, name: string): void {
-  socket && socket.emit('name', name);
+  socket?.emit('name', name);
 }
 
 function getPlayerName(): string {
@@ -83,7 +83,6 @@ const Room: FunctionComponent<Props> = (props) => {
   useEffect(() => {
     if (socket) {
       socket.on('connect', () => {
-        setLoading(false);
         // If the player was in the middle of a vote send the vote back to the server.
         player.vote && socket?.emit('vote', player.vote);
         // Keep the name up to date in the sever after re-connections.
@@ -107,6 +106,7 @@ const Room: FunctionComponent<Props> = (props) => {
     }
 
     stateStore.setState({ room: roomId });
+    setLoading(false);
 
     return (): void => {
       if (socket) {
@@ -114,7 +114,7 @@ const Room: FunctionComponent<Props> = (props) => {
         socket.off('update');
       }
     };
-  }, [socket, roomId]);
+  }, [socket, roomId, player, server]);
 
   return (
     <>
