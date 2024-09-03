@@ -5,3 +5,4 @@
 client/.env
 client/.eslintcache
 coverage/
+server/dist/*
