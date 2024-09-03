@@ -1,6 +1,6 @@
 import { Socket } from 'socket.io';
 import express from 'express';
-import dotenv from 'dotenv';
+import * as dotenv from 'dotenv';
 import short from 'short-uuid';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
