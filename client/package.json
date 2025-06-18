@@ -4,9 +4,9 @@
   "version": "1.1.0",
   "license": "MIT",
   "scripts": {
-    "build": "preact build",
-    "serve": "sirv build --port 8080 --cors --single",
-    "dev": "preact watch --refresh",
+    "build": "vite build",
+    "serve": "vite preview",
+    "dev": "vite",
     "lint": "eslint . --cache --ext .ts,.tsx",
     "lint:fix": "eslint . --cache --ext .ts,.tsx --fix",
     "prettier": "prettier --check .",
@@ -25,31 +25,32 @@
     ]
   },
   "dependencies": {
-    "preact": "^10.15.1",
-    "preact-render-to-string": "^6.1.0",
-    "preact-router": "^4.1.1",
+    "@preact/preset-vite": "^2.10.1",
+    "preact": "^10.26.9",
+    "preact-render-to-string": "^6.5.13",
+    "preact-router": "^4.1.2",
     "react-idle-timer": "^5.7.2",
-    "socket.io-client": "^4.7.1",
-    "zustand": "^4.3.9"
+    "socket.io-client": "^4.8.1",
+    "vite": "^6.3.5",
+    "zustand": "^4.5.7"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/preact": "^3.2.3",
-    "@types/enzyme": "^3.10.13",
-    "@types/jest": "^29.5.2",
-    "@typescript-eslint/eslint-plugin": "^5.61.0",
-    "@typescript-eslint/parser": "^5.61.0",
-    "dotenv-webpack": "^8.0.1",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/preact": "^3.2.4",
+    "@types/enzyme": "^3.10.19",
+    "@types/jest": "^29.5.14",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "dotenv-webpack": "^8.1.0",
     "enzyme": "^3.11.0",
     "enzyme-adapter-preact-pure": "^4.1.0",
-    "eslint": "^8.44.0",
-    "eslint-config-preact": "^1.3.0",
-    "jest": "^27.2.5",
-    "jest-preset-preact": "^4.0.5",
-    "preact-cli": "^3.4.6",
-    "sirv-cli": "^2.0.2",
+    "eslint": "^8.57.1",
+    "eslint-config-preact": "^1.5.0",
+    "jest": "^27.5.1",
+    "jest-preset-preact": "^4.1.1",
+    "sirv-cli": "^3.0.1",
     "socket.io-mock": "^1.3.2",
-    "typescript": "^5.1.6"
+    "typescript": "^5.8.3"
   },
   "jest": {
     "preset": "jest-preset-preact",
@@ -67,6 +68,11 @@
     "coverageDirectory": "../coverage",
     "moduleNameMapper": {
       "src/(.*)": "<rootDir>/src/$1"
+    },
+    "devDependencies": {
+      "@vitejs/plugin-react": "^4.2.1",
+      "@preact/preset-vite": "^4.3.2",
+      "vite": "^5.2.0"
     }
   }
 }

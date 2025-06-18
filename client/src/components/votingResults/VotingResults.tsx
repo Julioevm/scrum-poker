@@ -1,6 +1,6 @@
 import { Player } from 'components/app';
 import { h } from 'preact';
-import style from './style.css';
+import './style.css';
 
 interface Props {
   players: Player[];
@@ -11,7 +11,7 @@ function playerVotes(players: Player[], show: boolean) {
   return players.map((player, index) => (
     <div key={index}>
       <div
-        class={player.vote ? style.voted : undefined}
+        class={player.vote ? 'voted' : undefined}
         data-testid="player-vote-line"
       >
         {player.name}{' '}

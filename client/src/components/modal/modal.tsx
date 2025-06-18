@@ -1,5 +1,5 @@
 import { FunctionalComponent, h } from 'preact';
-import style from './style.css';
+import './style.css';
 
 interface Props {
   title: string;
@@ -7,8 +7,8 @@ interface Props {
 
 const Modal: FunctionalComponent<Props> = (props) => {
   return (
-    <div class={style.modal}>
-      <div class={style.modalContent}>
+    <div class="modal">
+      <div class="modalContent">
         <div>
           <h2>{props.title}</h2>
         </div>

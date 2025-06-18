@@ -1,5 +1,5 @@
 import { h } from 'preact';
-import style from './style.css';
+import './style.css';
 
 interface Props {
   values: string[];
@@ -11,11 +11,11 @@ interface Props {
 function votingMenu(props: Props) {
   const { values, handlePlayerVote, disabled, vote } = props;
   const buttonClass = (value: string) => {
-    return value === vote ? style.voted : disabled ? style.disabled : undefined;
+    return value === vote ? 'voted' : disabled ? 'disabled' : undefined;
   };
 
   return (
-    <div class={style.menuWrapper}>
+    <div class="menuWrapper">
       <p>Please vote:</p>
       {values.map((value) => (
         <button

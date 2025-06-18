@@ -2,7 +2,7 @@ import { FunctionalComponent, h } from 'preact';
 import { Link, route } from 'preact-router';
 import { io } from 'socket.io-client';
 import { stateStore } from 'components/app';
-import style from './style.css';
+import './style.css';
 import { getServerURL } from 'Utils/utils';
 import { useState } from 'preact/hooks';
 
@@ -24,15 +24,15 @@ const Home: FunctionalComponent = () => {
   }
 
   return (
-    <div class={style.wrapper}>
-      <header class={style.home}>
+    <div className="wrapper">
+      <header className="home">
         <h1>Scrum Poker</h1>
         <p>Welcome to Scrum Poker!</p>
       </header>
       <nav>
         {loading && <p>Loading...</p>}
         {!loading && <button onClick={startGame}>New Room</button>}
-        {room && <Link href={`/room/${room}`}>Back to last room...</Link>}
+        {room && <Link path={`/room/${room}`}>Back to last room...</Link>}
       </nav>
     </div>
   );

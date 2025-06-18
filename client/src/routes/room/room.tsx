@@ -8,7 +8,7 @@ import { useEffect, useState } from 'preact/hooks';
 import { useIdleTimer } from 'react-idle-timer';
 import { io, Socket } from 'socket.io-client';
 import { getServerURL } from 'Utils/utils';
-import style from './style.css';
+import './style.css';
 
 interface Props {
   roomId: string;
@@ -126,14 +126,14 @@ const Room: FunctionComponent<Props> = (props) => {
         />
       )}
       {showIdleModal && <IdleModal />}
-      <div class={style.room}>
-        <div class={style.playerName}>
+      <div class="room">
+        <div class="playerName">
           <h2>Welcome, {player.name}.</h2>{' '}
           <button class="buttonLink" onClick={(): void => setShowModal(true)}>
             Change Name
           </button>
         </div>
-        <div class={style.roomName}>
+        <div class="roomName">
           Room: {roomId}{' '}
           <button class="buttonLink" onClick={copyLink(roomId)}>
             Copy Invite Link

@@ -1,5 +1,5 @@
 export function getServerURL(): string {
-  return process.env.SCRUM_POKER_SERVER || 'http://127.0.0.1:3000';
+  return import.meta.env.VITE_SCRUM_POKER_SERVER || 'http://127.0.0.1:3000';
 }
 
 export function getDefaultTheme() {

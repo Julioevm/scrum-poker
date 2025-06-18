@@ -1,8 +1,7 @@
 import { Fragment, FunctionalComponent, h } from 'preact';
 import { useState } from 'preact/hooks';
-import React from 'react';
 import { themeStore } from '../app';
-import style from './style.css';
+import  './style.css';
 
 const Toggle: FunctionalComponent = () => {
   const theme = themeStore.getState().theme;
@@ -16,17 +15,17 @@ const Toggle: FunctionalComponent = () => {
   return (
     <Fragment>
       {isDark ? '🌞' : '🌙'}
-      <div className={style.switchWrapper}>
+      <div className={"switchWrapper"}>
         <input
           checked={isDark}
           onChange={switchTheme}
-          className={style.switchCheckbox}
+          className={"switchCheckbox"}
           id={'switch'}
           type="checkbox"
           data-testid="theme-toggle"
         />
-        <label className={style.switchLabel} htmlFor={`switch`}>
-          <span className={style.switchButton} />
+        <label className={"switchLabel"} htmlFor={`switch`}>
+          <span className={"switchButton"} />
         </label>
       </div>
     </Fragment>
